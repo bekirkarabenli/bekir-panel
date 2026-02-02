@@ -1,0 +1,1 @@
+{"error":"\n  - command failed:\n    main.execute\n        ./main.go:230\n  - signal: broken pipe:\n    gkcli/internal/installerproxy.(*svc).Proxy\n        gkcli/internal/installerproxy/service.go:203\n  - signal: broken pipe","level":"error","msg":"command failed","time":"2026-01-07T19:02:35.069866635+01:00"}

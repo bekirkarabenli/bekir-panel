@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPTV Link Checker | Bekir Panel</title>
+
+    <link rel="stylesheet" href="/static/xtream_style.css">
+</head>
+
+<body>
+
+    <!-- BAŞLIK -->
+    <h2>🔍 IPTV Link Checker <span id="brand-inline">BEKOMAX</span></h2>
+
+    <!-- ÜST İSTATİSTİK + SAAT -->
+    <div class="stats-box">
+        <div id="stats"></div>
+
+        <div class="clock-box">
+            <div id="liveClock">--:--:--</div>
+            <div id="liveDate">--.--.----</div>
+        </div>
+    </div>
+
+    <!-- TARAMA KUTUSU -->
+    <div id="scanBox">
+        <div class="scan-header">
+            <div id="scanText">Taranıyor: 0 / 0</div>
+            <div style="color:#22c55e;">
+                ⏱ <span id="elapsedTime">00:00</span> | ⏳ <span id="remainingTime">--:--</span>
+            </div>
+            <div id="scanPercent">%0</div>
+        </div>
+
+        <div class="outer">
+            <div id="scanBar"></div>
+        </div>
+    </div>
+
+    <!-- ÜST BUTON PANELİ -->
+<div class="panel-actions" style="display: flex !important; justify-content: space-between !important; align-items: center !important; gap: 8px; padding: 10px 15px; background: #1e293b; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px; flex-wrap: nowrap !important; width: 100% !important; box-sizing: border-box !important;">
+    
+    <div class="left-action-group" style="display: flex; gap: 8px; align-items: center; flex: 1 !important;">
+        <div class="action-group" style="display: flex; gap: 5px; flex: 2 !important;">
+            <input id="newLine" class="input-add" style="width: 100% !important; min-width: 150px;" placeholder="🔗 Xtream / M3U link yapıştır...">
+            <button class="btn-add" style="white-space: nowrap;" onclick="addLine()">➕ EKLE</button>
+        </div>
+        <div class="action-group" style="display: flex; flex: 1 !important;">
+            <input id="search" class="input-search" style="width: 100% !important; min-width: 120px;" placeholder="🔍 Listede ara..." oninput="render()">
+        </div>
+    </div>
+
+    <div class="right-action-group" style="display: flex; gap: 5px; flex-wrap: nowrap; align-items: center; flex: 1.2 !important; justify-content: flex-end !important;">
+        <button class="btn-scan" style="background: #22c55e !important; white-space: nowrap; flex: 1;" onclick="startScan()">⚡ TARAMAYI BAŞLAT</button>
+        <button class="btn-txt" style="white-space: nowrap; flex: 0.7;" onclick="exportTXT()">📄 TXT</button>
+        <button class="btn-m3u" style="white-space: nowrap; flex: 0.8;" onclick="m3uKopyala()">📋 FAVORİ M3U</button>
+        <button class="btn-undo" style="white-space: nowrap; flex: 0.7;" onclick="undo()">↩️ GERİ AL</button>
+        <button class="btn-load" style="white-space: nowrap; flex: 0.8;" onclick="location.reload()">🔄 YENİLE</button>
+        <button class="btn-del" style="background: #ef4444 !important; white-space: nowrap; flex: 0.8;" onclick="restartPanel()">🔁 PANEL SIFIRLA</button>
+        <button class="btn-theme" style="white-space: nowrap; background: #6366f1 !important; flex: 0.8;" onclick="toggleTheme()">🎨 TEMA</button>
+        
+        <div id="themePopup" class="theme-popup">
+            <div class="theme-option" onclick="setTheme('dark')"><span>Dark</span></div>
+            <div class="theme-option" onclick="setTheme('glass')"><span>Glass</span></div>
+            <div class="theme-option" onclick="setTheme('neon')"><span>Neon</span></div>
+            <div class="theme-option" onclick="setTheme('flat')"><span>Flat</span></div>
+            <div class="theme-option" onclick="setTheme('future')"><span>Future</span></div>
+        </div>
+    </div>
+</div>
+
+    <!-- ALT FİLTRE BUTONLARI -->
+    <div class="action-bottom">
+        <div class="action-left">
+            <button class="btn-all" onclick="setAll()">🌐 TÜMÜ</button>
+            <button class="btn-host" onclick="setHostOnly()">🖥 HOST</button>
+            <button class="btn-max1" onclick="setFilter('max1')">👤 1 Max</button>
+            <button class="btn-max2" onclick="setFilter('max2')">👥 2+ Max</button>
+        </div>
+
+        <div class="action-right">
+            <button class="btn-delete-max1" onclick="deleteMax1()">🧹 MAX 1 SİL</button>
+            <button class="btn-delete-20days" onclick="deleteDays20()">⏳ 20 GÜN ALTI SİL</button>
+            <button class="btn-delete-zero" onclick="deleteAllOffline()">🚫 OFFLINE SİL</button>
+            <button class="btn-delete-country" onclick="deleteByCountry()">🌍 ÜLKE SİL</button>
+        </div>
+    </div>
+
+    <!-- ÜLKE BAYRAKLARI -->
+    <div id="countryFlags"></div>
+
+<div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align:left; padding-left:20px;">🌐 HOST ADRESİ</th>
+                    <th style="text-align:left;">👤 KULLANICI (İZLE)</th>
+                    <th style="text-align:left;">🔑 ŞİFRE</th>
+                    <th style="text-align:center;">🌍 SERVER</th>
+                    <th style="text-align:center;">📶 MAX</th>
+                    <th style="text-align:center;">⏳ KALAN GÜN</th>
+                    <th style="text-align:center;">⚡ HIZLI İŞLEM</th>
+                </tr>
+            </thead>
+            <tbody id="list">
+                </tbody>
+        </table>
+    </div>
+    
+    <!-- TOAST -->
+    <div id="toast"></div>
+
+    <script src="/static/xtream_script.js?v=1.4"></script>
+
+    <script>
+        window.onload = function () {
+            if (typeof loadInitialData === "function") loadInitialData();
+            updateClock();
+            setInterval(updateClock, 1000);
+        };
+    </script>
+
+</body>
+
+</html>
